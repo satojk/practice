@@ -1,11 +1,14 @@
-# TODO: merge play and play_turn methods, and has_winner and check_winner methods.
-# TODO: fix style. I know it's gross right now.
+# TODO: make more robust.
 # TODO: make graphical interface.
 import numpy as np
 
+_BOARD_HEIGHT = 7
+_BOARD_WIDTH  = 7
+FOOTER = "   " + "   ".join([str(x+1) for x in range(_BOARD_WIDTH)]) + "\n"
+
 class Game(object):
 
-    def __init__(self, width, height):
+    def __init__(self, height, width):
         self.board = np.full((height, width), "_") 
         self.height = height
         self.width = width
@@ -13,15 +16,7 @@ class Game(object):
     def __repr__(self):
         return str(self.board)
 
-    def play(self, token, col):
-        for i in range(self.height):
-            if self.board[self.height-i-1][col] == "_":
-                self.board[self.height-i-1][col] = token
-                break
-        else:
-            raise Exception("Column is full!")
-
-    def has_winner(self):
+    def is_over(self):
         seqs = []
         for i in range(self.height-3): #get all 4-diags
             for j in range(self.width):
@@ -44,32 +39,30 @@ class Game(object):
                 seqs.append((self.board[i:i+4,j]).tolist())
         for seq in seqs:
             if seq == ["X"]*4:
-                return "X"
+                print("X has won the game!")
+                return True
             if seq == ["O"]*4:
-                return "O"
-        return "_"
+                print("O has won the game!")
+                return True
+        return False
+        
+    def play_turns(self):
+        for token in ["X", "O"]:
+            print(str(self) + "\n" + FOOTER)
+            if self.is_over():
+                return False
+            print("It's {}'s turn. Which column do you want to play?".format(token))
+            col = int(input()) - 1
+            print("\n")
+            for i in range(self.height):
+                if self.board[self.height-i-1][col] == "_":
+                    self.board[self.height-i-1][col] = token
+                    break
+            else:
+                raise Exception("Column is full!")
+        return True
 
-    def play_turn(self, token):
-        print("It's {}'s turn. Which column do you want to play?".format(token))
-        play = int(input())
-        self.play(token, play-1)
-        print("\n")
+game = Game(_BOARD_HEIGHT, _BOARD_WIDTH)
 
-    def check_winner(self):
-        result = self.has_winner()
-        if result != "_":
-            print("{} has won the game!".format(result))
-            return True
-
-game = Game(7, 7)
-while True:
-    print(game)
-    print("   1   2   3   4   5   6   7\n")
-    if game.check_winner():
-        break
-    game.play_turn("X")
-    print(game)
-    print("   1   2   3   4   5   6   7\n")
-    if game.check_winner():
-        break
-    game.play_turn("O")
+while game.play_turns():
+    pass
