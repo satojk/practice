@@ -1,0 +1,6 @@
+Lists - Cipher (Chapter exercises)
+Folding Lists - Chapter exercises
+Algebraic Datatypes - Ciphers, Phone exercise (Chapter exercises)
+Signaling Adversity - Chapter exercises
+Building Projects - Chapter exercises
+Testing - Chapter exercises
